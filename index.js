@@ -1,15 +1,17 @@
+require('dotenv').config();
 const express = require("express");
-const app = express();
-const port = process.env.port || 3000;
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
-// middleware
+const app = express();
+const port = process.env.PORT || 3000;
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-const uri =
-  "mongodb+srv://Export-Import-DB:3RdsIoy1P3XzCf9t@cluster0.kw3z4m2.mongodb.net/?appName=Cluster0";
+// MongoDB URI using environment variables
+const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_CLUSTER}/${process.env.MONGO_DB}?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
