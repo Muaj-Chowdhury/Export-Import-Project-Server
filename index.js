@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
@@ -44,9 +44,7 @@ async function run() {
     });
 
     app.get("/all-products", async (req, res) => {
-      const result = await productsCollection
-        .find()
-        .toArray();
+      const result = await productsCollection.find().toArray();
       res.send(result);
     });
 
@@ -87,22 +85,61 @@ async function run() {
       }
     });
 
-    app.get("/myImports", async (req , res)=>{
-        const email = req.query.email
-        const result = await importsCollection.find({email: email}).toArray()
-        res.send(result)
-    })
+    app.get("/myImports", async (req, res) => {
+      const email = req.query.email;
+      const result = await importsCollection.find({ email: email }).toArray();
+      res.send(result);
+    });
 
-    app.delete("/myImports/:id", async (req , res)=>{
-        const id = req.params.id
-        const result = await importsCollection.deleteOne({ _id: new ObjectId(id) })
-        res.send(result)
-    })
+    app.delete("/myImports/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await importsCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
+      res.send(result);
+    });
 
-    app.post("/Exports",   async (req, res) => {
+    app.post("/products", async (req, res) => {
       const data = req.body;
       // console.log(data)
       const result = await productsCollection.insertOne(data);
+      res.send(result);
+    });
+
+    app.get("/myExports", async (req, res) => {
+      const email = req.query.email;
+      const result = await productsCollection
+        .find({ exporterEmail: email })
+        .toArray();
+      res.send(result);
+    });
+
+    app.delete("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await productsCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
+      res.send(result);
+    });
+
+    app.put("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const data = req.body;
+      console.log(data);
+
+      const result = await productsCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: data }
+      );
+      res.send(result);
+      console.log(result);
+    });
+
+    app.get("/search", async (req, res) => {
+      const search_text = req.query.search;
+      const result = await modelCollection
+        .find({name: {$regex: search_text , $options: "i"}})
+        .toArray();
       res.send(result);
     });
 
